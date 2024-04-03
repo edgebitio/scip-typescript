@@ -420,7 +420,11 @@ export class FileIndexer {
         )
       )
     }
-
+    if (isAssignmentExpression(node)) {
+      if (isModuleExports(node.left)) {
+        return this.scipSymbol(node.getSourceFile())
+      }
+    }
     if (ts.isJsxAttribute(node)) {
       // NOTE(olafurpg): the logic below is a bit convoluted but I spent several
       // hours and failed to come up with a cleaner solution. JSX attributes
@@ -876,4 +880,27 @@ function isDefinition(node: ts.Node): boolean {
   return (
     declarationName(node.parent) === node || ts.isConstructorDeclaration(node)
   )
+}
+
+function isAssignmentExpression(node: ts.Node): node is ts.BinaryExpression {
+  return (
+    ts.isBinaryExpression(node) &&
+    node.operatorToken.kind === ts.SyntaxKind.EqualsToken
+  )
+}
+
+function isModuleExports(node: ts.Node): boolean {
+  if (ts.isPropertyAccessExpression(node)) {
+    if (ts.isIdentifier(node.expression) && node.expression.text === 'module') {
+      if (ts.isIdentifier(node.name) && node.name.text === 'exports') {
+        return true
+      }
+    }
+  } else if (ts.isIdentifier(node)) {
+    if (node.text === 'exports') {
+      return true
+    }
+  }
+
+  return false
 }

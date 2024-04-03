@@ -16,6 +16,10 @@ function createCompilerHost(
   compilerOptions: ts.CompilerOptions,
   projectOptions: ProjectOptions
 ): ts.CompilerHost {
+  compilerOptions.noDtsResolution = true
+  compilerOptions.maxNodeModuleJsDepth = 100000
+  compilerOptions.allowJs = true
+
   const host = ts.createCompilerHost(compilerOptions)
   if (!projectOptions.globalCaches) {
     return host
@@ -44,6 +48,10 @@ function createCompilerHost(
     onError,
     shouldCreateNewSourceFile
   ) => {
+    if (fileName.endsWith('.d.ts')) {
+      return undefined
+    }
+
     const fromCache = cache.sources.get(fileName)
     if (fromCache !== undefined) {
       const [sourceFile, cachedLanguageVersion] = fromCache
@@ -65,6 +73,28 @@ function createCompilerHost(
     }
     return result
   }
+
+  host.readDirectory = (rootDir, extensions, excludes, includes, depth) => {
+    if (!hostCopy.readDirectory) {
+      return []
+    }
+
+    const entries = hostCopy.readDirectory(
+      rootDir,
+      extensions,
+      excludes,
+      includes,
+      depth
+    )
+    return entries.filter(entry => !entry.endsWith('.d.ts'))
+  }
+
+  host.fileExists = fileName =>
+    fileName.endsWith('.d.ts') ? false : hostCopy.fileExists(fileName)
+
+  host.readFile = fileName =>
+    fileName.endsWith('.d.ts') ? undefined : hostCopy.readFile(fileName)
+
   return host
 }
 
