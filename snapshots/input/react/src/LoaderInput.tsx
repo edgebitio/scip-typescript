@@ -6,7 +6,7 @@ interface Props {
   children: React.ReactNode
 }
 
-export const LoaderInput: React.FunctionComponent<Props> = ({
+export const LoaderInput: (props: Props) => any = ({
   loading,
   children,
 }) => (
@@ -16,6 +16,6 @@ export const LoaderInput: React.FunctionComponent<Props> = ({
   </div>
 )
 
-export const LoaderInput2: React.FunctionComponent<Props> = props => {
+export const LoaderInput2: (props: Props) => any = props => {
   return <LoaderInput loading={true} key="key" children={props.children} />
 }
