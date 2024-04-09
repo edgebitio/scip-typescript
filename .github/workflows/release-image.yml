@@ -73,8 +73,8 @@ jobs:
         with:
           edgebit-url: https://edgebit.edgebit.io
           token: ${{ secrets.EDGEBIT_TOKEN }}
-          labels: "app=scip-typescript"
-          image-id: "${{ steps.build.outputs.imageid }}"
+          labels: 'app=scip-typescript'
+          image-id: '${{ steps.build.outputs.imageid }}'
           sbom-file: /tmp/sbom.spdx.json
           component: scip-typescript
           tags: "${{ github.ref == 'refs/heads/main' && 'latest' || '' }},${{ env.SHORT_SHA }}"
