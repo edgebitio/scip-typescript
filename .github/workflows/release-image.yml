@@ -42,7 +42,7 @@ jobs:
         id: image-metadata
         uses: docker/metadata-action@v5
         with:
-          images: public.ecr.aws/edgebitio/scip-typescript
+          images: public.ecr.aws/edgebit/scip-typescript
           tags: |
             type=sha,
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
@@ -51,7 +51,6 @@ jobs:
         id: build
         uses: docker/build-push-action@v4
         with:
-          file: "Dockerfile"
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.image-metadata.outputs.tags }}
           push: true
