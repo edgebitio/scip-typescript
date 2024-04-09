@@ -26,7 +26,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Authenticate to AWS
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: us-west-2
           role-to-assume: arn:aws:iam::970625735569:role/GitHubActionsECRPush
@@ -42,7 +42,7 @@ jobs:
         id: image-metadata
         uses: docker/metadata-action@v5
         with:
-          images: public.ecr.aws/edgebit
+          images: public.ecr.aws/edgebitio/scip-typescript
           tags: |
             type=sha,
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
