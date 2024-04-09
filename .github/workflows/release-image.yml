@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+env:
+  CONTAINER_IMAGE: public.ecr.aws/edgebit/scip-typescript
+
 jobs:
   build-scip-typescript:
     permissions:
@@ -44,7 +47,7 @@ jobs:
         id: image-metadata
         uses: docker/metadata-action@v5
         with:
-          images: public.ecr.aws/edgebit/scip-typescript
+          images: ${{ env.CONTAINER_IMAGE }}
           tags: |
             type=sha,
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
@@ -60,7 +63,7 @@ jobs:
       - name: Generate SBOM from the container
         uses: anchore/sbom-action@v0
         with:
-          image: ${{ steps.build.outputs.imageid }}
+          image: ${{ env.CONTAINER_IMAGE}}@${{ steps.build.outputs.imageid }}
           artifact-name: sbom.spdx.json
           output-file: /tmp/sbom.spdx.json
 
